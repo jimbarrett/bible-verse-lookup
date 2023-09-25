@@ -1,9 +1,12 @@
 This is a small app that I created in order to try out NextJS. 
 
-You can look up bible verses and click through to next/previous verse. The database is the sqlite db that I got from [scrollmapper's repo](https://github.com/scrollmapper/bible_databases). It's a great resource 
-and I've used their mysql db on other projects.
+You can look up bible verses and click through to next/previous verse. The database is the sqlite db that I got from [scrollmapper's repo](https://github.com/scrollmapper/bible_databases). It's a great resource and I've used their mysql db on other projects.
 
-Right now I'm only do lookups on the King James version, but I may expand to use some of the other versions at some point in the future. If time permits I may also add a 'related verse' feature. 
+### A few things I may add later...
+* Add support for mysql db in addition to sqlite. Not sure why aside from it may be cool to have options.
+* Right now I'm only doing lookups on the King James version. I hope to add another selector so you can choose your version.
+* Add a 'related verses' lookup. We have a cross_references table in the db that should make this pretty straight forward.
+* If I get really bored I may restyle it but probably not.
 
 You can run it just like any other NextJS app...
 
