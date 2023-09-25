@@ -31,11 +31,7 @@ const Lookup = () => {
         <option value="0">Book...</option>
         {books.map((book, index) => {
           return (
-            <option
-              key={book.order}
-              value={index + 1}
-              //   onClick={() => selectBook(parseInt(book.order))}
-            >
+            <option key={book.order} value={index + 1}>
               {book.title_short}
             </option>
           );
