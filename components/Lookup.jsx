@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import Selector from "./Selector";
 
 const Lookup = () => {
   const [books, setBooks] = useState(null);
@@ -7,8 +8,11 @@ const Lookup = () => {
   const [verses, setVerses] = useState(0);
   const [isLoading, setLoading] = useState(true);
   const [selectedBook, setSelectedBook] = useState(0);
+  const [bookLabel, setBookLabel] = useState("Book...");
   const [selectedChapter, setSelectedChapter] = useState(0);
+  const [chapterLabel, setChapterLabel] = useState("Chapter...");
   const [selectedVerse, setSelectedVerse] = useState(null);
+  const [verseLabel, setVerseLabel] = useState("Verse...");
 
   useEffect(() => {
     fetch("/api/books")
@@ -19,106 +23,45 @@ const Lookup = () => {
       });
   }, []);
 
-  const bookSelector = () => {
-    return (
-      <select
-        value={selectedBook}
-        className="bcvSelector"
-        onChange={(e) => {
-          selectBook(parseInt(e.target.value));
-        }}
-      >
-        <option value="0">Book...</option>
-        {books.map((book, index) => {
-          return (
-            <option key={book.order} value={index + 1}>
-              {book.title_short}
-            </option>
-          );
-        })}
-      </select>
-    );
-  };
-
-  const chapterSelector = () => {
-    let options = [];
-    options.push(
-      <option value="0" key="0">
-        Chapter...
-      </option>
-    );
-    for (let i = 1; i <= chapters; i++) {
-      options.push(
-        <option value={i} key={i}>
-          Chapter {i}
-        </option>
-      );
-    }
-    if (chapters > 0) {
-      return (
-        <select
-          value={selectedChapter}
-          className="bcvSelector"
-          onChange={(e) => {
-            selectChapter(parseInt(e.target.value));
-          }}
-        >
-          {options}
-        </select>
-      );
-    }
-  };
-  const verseSelector = () => {
-    let options = [];
-    options.push(
-      <option value="0" key="0">
-        Verse...
-      </option>
-    );
-    for (let i = 1; i <= verses; i++) {
-      options.push(
-        <option value={i} key={i}>
-          Verse {i}
-        </option>
-      );
-    }
-    if (verses > 0) {
-      let sv = 0;
-      if (selectedVerse?.v) sv = selectedVerse.v;
-      return (
-        <select
-          value={sv}
-          className="bcvSelector"
-          onChange={(e) => {
-            selectVerse(parseInt(e.target.value));
-          }}
-        >
-          {options}
-        </select>
-      );
-    }
-  };
-
-  const selectBook = (index) => {
+  const selectBook = (order, label) => {
     // this gets weird because the book at index 0
     // has order = 1 and order is being used for lookups, etc.
-    setChapters(books[index - 1].chapters);
-    setSelectedBook(books[index - 1].order);
+    setChapters(books[order - 1].chapters);
+    setSelectedBook(books[order - 1].order);
+    setBookLabel(label);
     setSelectedChapter(0);
     setVerses(0);
     setSelectedVerse(null);
   };
 
-  const selectChapter = async (c) => {
+  const selectChapter = async (c, label) => {
     let verse_count = await getVerseCount(selectedBook, c);
     setSelectedChapter(c);
+    setChapterLabel(label);
     setVerses(verse_count.count);
     setSelectedVerse(null);
   };
 
-  const selectVerse = async (v) => {
+  const selectVerse = async (v, label) => {
     let verse = await getSelectedVerse(selectedBook, selectedChapter, v);
     setSelectedVerse(verse.verse);
+    setVerseLabel(label);
+  };
+
+  const formatChapters = (chapterCount) => {
+    let chapterArr = [];
+    for (let i = 1; i <= chapterCount; i++) {
+      chapterArr.push({ order: i, label: "Chapter " + i });
+    }
+    return chapterArr;
+  };
+
+  const formatVerses = (verseCount) => {
+    let verseArr = [];
+    for (let i = 1; i <= verseCount; i++) {
+      verseArr.push({ order: i, label: "Verse " + i });
+    }
+    return verseArr;
   };
 
   const getSelectedVerse = async (b, c, v) => {
@@ -152,10 +95,14 @@ const Lookup = () => {
     });
     let verse = await response.json();
     let verse_count = await getVerseCount(verse.verse.b, verse.verse.c);
+
     setVerses(verse_count.count);
     setSelectedBook(verse.verse.b);
+    setBookLabel(verse.verse.title_short);
     setSelectedChapter(verse.verse.c);
+    setChapterLabel("Chapter " + verse.verse.c);
     setSelectedVerse(verse.verse);
+    setVerseLabel("Verse " + verse.verse.v);
   };
 
   const outputVerse = () => {
@@ -201,9 +148,31 @@ const Lookup = () => {
   return (
     <div className="p-4">
       <div className="columns-3 w-full text-xl">
-        <div>{bookSelector()}</div>
-        <div>{chapterSelector()}</div>
-        <div>{verseSelector()}</div>
+        <Selector
+          label={bookLabel}
+          items={books}
+          value_field="order"
+          label_field="title_short"
+          select={selectBook}
+        />
+        {chapters > 0 && (
+          <Selector
+            label={chapterLabel}
+            items={formatChapters(chapters)}
+            value_field="order"
+            label_field="label"
+            select={selectChapter}
+          />
+        )}
+        {verses > 0 && (
+          <Selector
+            label={verseLabel}
+            items={formatVerses(verses)}
+            value_field="order"
+            label_field="label"
+            select={selectVerse}
+          />
+        )}
       </div>
       {outputVerse()}
     </div>
