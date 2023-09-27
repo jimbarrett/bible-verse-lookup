@@ -30,6 +30,7 @@ const Lookup = () => {
     setSelectedBook(books[order - 1].order);
     setBookLabel(label);
     setSelectedChapter(0);
+    setChapterLabel("Chapter...");
     setVerses(0);
     setSelectedVerse(null);
   };
@@ -40,6 +41,7 @@ const Lookup = () => {
     setChapterLabel(label);
     setVerses(verse_count.count);
     setSelectedVerse(null);
+    setVerseLabel("Verse...");
   };
 
   const selectVerse = async (v, label) => {
