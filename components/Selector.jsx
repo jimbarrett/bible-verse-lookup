@@ -6,7 +6,7 @@ const Selector = ({ label, items, value_field, label_field, select }) => {
   const [showDropdown, setShowDropdown] = useState(false);
 
   return (
-    <div className="relative">
+    <div className="relative w-1/3">
       <div
         className="bcvSelector"
         onClick={() => setShowDropdown((prev) => !prev)}

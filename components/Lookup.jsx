@@ -147,7 +147,7 @@ const Lookup = () => {
 
   return (
     <div className="p-4">
-      <div className="columns-3 w-full text-xl">
+      <div className="flex gap-3 w-full text-xl">
         <Selector
           label={bookLabel}
           items={books}
