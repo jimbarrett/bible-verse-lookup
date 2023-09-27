@@ -38,7 +38,11 @@ nav.mainNav {
 
 /* Lookup */
 .bcvSelector {
-  @apply w-full p-3 bg-green-600 bg-opacity-70 font-semibold text-gray-100;
+  @apply w-full p-2 bg-green-600 bg-opacity-60 font-semibold text-gray-100;
+}
+
+.dropDown {
+  @apply w-full border border-blue-400 absolute h-72 overflow-auto py-3 text-base;
 }
 
 .slideButton {
