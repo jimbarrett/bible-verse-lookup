@@ -110,7 +110,7 @@ const Lookup = () => {
   const outputVerse = () => {
     if (selectedVerse) {
       return (
-        <div className="w-full border-2 border-green-500 border-t-0 p-4 text-xl rounded rounded-t-none">
+        <div className="w-full border-2 border-green-500 border-t-0 p-4 text-base rounded rounded-t-none">
           <div className="text-sm font-mono border-b border-gray-400 mb-3 flex-between">
             <div className="font-bold">
               {selectedVerse.title_short} {selectedVerse.c}:{selectedVerse.v}
@@ -149,7 +149,7 @@ const Lookup = () => {
 
   return (
     <div className="p-4">
-      <div className="flex gap-3 w-full text-xl">
+      <div className="flex gap-3 w-full text-lg">
         <Selector
           label={bookLabel}
           items={books}

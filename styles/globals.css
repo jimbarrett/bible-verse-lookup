@@ -46,5 +46,5 @@ nav.mainNav {
 }
 
 .slideButton {
-  @apply bg-transparent hover:bg-green-800 text-green-900 hover:text-white border border-green-800 py-1 px-4 mb-1 rounded-full text-xs;
+  @apply bg-transparent hover:bg-green-800 text-green-900 hover:text-white border border-green-800 py-1 px-3 mb-1 rounded-full text-xs;
 }
