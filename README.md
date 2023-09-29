@@ -22,3 +22,6 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) and you're all set.
 
+###Update: 09/28/23
+I've added jest and written the first few unit tests for this. I'm mostly only doing this to keep the habit alive.
+
