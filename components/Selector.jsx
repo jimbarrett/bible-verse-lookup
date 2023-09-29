@@ -28,7 +28,7 @@ const Selector = ({ label, items, value_field, label_field, select }) => {
         </svg>
       </div>
       {showDropdown && (
-        <div className="dropDown">
+        <div className="dropDown" data-testid="dropdown">
           {items.map((i) => {
             return (
               <span

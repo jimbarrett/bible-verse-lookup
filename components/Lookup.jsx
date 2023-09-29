@@ -2,8 +2,15 @@
 import { useState, useEffect } from "react";
 import Selector from "./Selector";
 
+const findBooks = async () => {
+  const response = await fetch("/api/books");
+
+  const res = await response.json();
+  return res;
+};
+
 const Lookup = () => {
-  const [books, setBooks] = useState(null);
+  const [books, setBooks] = useState([]);
   const [chapters, setChapters] = useState(0);
   const [verses, setVerses] = useState(0);
   const [isLoading, setLoading] = useState(true);
@@ -15,13 +22,10 @@ const Lookup = () => {
   const [verseLabel, setVerseLabel] = useState("Verse...");
 
   useEffect(() => {
-    fetch("/api/books")
-      .then((res) => res.json())
-      .then((data) => {
-        setBooks(data.items);
-        setLoading(false);
-      });
-  }, []);
+    findBooks()
+      .then((data) => setBooks(data.items))
+      .then(() => setLoading(false));
+  },[]);
 
   const selectBook = (order, label) => {
     // this gets weird because the book at index 0
@@ -110,7 +114,10 @@ const Lookup = () => {
   const outputVerse = () => {
     if (selectedVerse) {
       return (
-        <div className="w-full border-2 border-green-500 border-t-0 p-4 text-base rounded rounded-t-none">
+        <div
+          className="w-full border-2 border-green-500 border-t-0 p-4 text-base rounded rounded-t-none"
+          data-testid="versewrapper"
+        >
           <div className="text-sm font-mono border-b border-gray-400 mb-3 flex-between">
             <div className="font-bold">
               {selectedVerse.title_short} {selectedVerse.c}:{selectedVerse.v}
@@ -143,13 +150,21 @@ const Lookup = () => {
   };
 
   if (isLoading)
-    return <div className="text-xl text-green-600 p-4">Loading...</div>;
-  if (!books)
-    return <div className="text-xl text-green-600 p-4">No Books Found</div>;
+    return (
+      <div className="text-xl text-green-600 p-4" data-testid="loading">
+        Loading...
+      </div>
+    );
+  if (!books.length)
+    return (
+      <div className="text-xl text-green-600 p-4" data-testid="booknotfound">
+        No Books Found
+      </div>
+    );
 
   return (
     <div className="p-4">
-      <div className="flex gap-3 w-full text-lg">
+      <div className="flex gap-3 w-full text-lg" data-testid="selectors">
         <Selector
           label={bookLabel}
           items={books}
