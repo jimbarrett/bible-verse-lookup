@@ -1,6 +1,7 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import Selector from "./Selector";
+import { BibleContext } from "@app/context/BibleContext";
 
 const findBooks = async () => {
   const response = await fetch("/api/books");
@@ -10,7 +11,7 @@ const findBooks = async () => {
 };
 
 const Lookup = () => {
-  const [books, setBooks] = useState([]);
+  const { books, setBooks } = useContext(BibleContext);
   const [chapters, setChapters] = useState(0);
   const [verses, setVerses] = useState(0);
   const [isLoading, setLoading] = useState(true);
@@ -22,10 +23,11 @@ const Lookup = () => {
   const [verseLabel, setVerseLabel] = useState("Verse...");
 
   useEffect(() => {
+    console.log("one");
     findBooks()
       .then((data) => setBooks(data.items))
       .then(() => setLoading(false));
-  },[]);
+  }, []);
 
   const selectBook = (order, label) => {
     // this gets weird because the book at index 0
