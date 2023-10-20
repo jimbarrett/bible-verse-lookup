@@ -1,5 +1,6 @@
 import Nav from "@components/Nav";
 import "@styles/globals.css";
+import { BibleProvider } from "@app/context/BibleContext";
 
 export const metadata = {
   title: "Bible Study",
@@ -13,11 +14,12 @@ const RootLayout = ({ children }) => {
         <div className="main">
           <div className="background" />
         </div>
-
-        <main className="app">
-          <Nav />
-          {children}
-        </main>
+        <BibleProvider>
+          <main className="app">
+            <Nav />
+            {children}
+          </main>
+        </BibleProvider>
       </body>
     </html>
   );

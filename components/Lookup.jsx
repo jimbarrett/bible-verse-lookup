@@ -11,48 +11,56 @@ const findBooks = async () => {
 };
 
 const Lookup = () => {
-  const { books, setBooks } = useContext(BibleContext);
-  const [chapters, setChapters] = useState(0);
-  const [verses, setVerses] = useState(0);
+  const { books, setBooks, selectors, setSelectors } = useContext(BibleContext);
+  const [currentSelection, setCurrentSelection] = useState({
+    book: 0,
+    chapter: 0,
+    verse: 0,
+  });
   const [isLoading, setLoading] = useState(true);
-  const [selectedBook, setSelectedBook] = useState(0);
   const [bookLabel, setBookLabel] = useState("Book...");
-  const [selectedChapter, setSelectedChapter] = useState(0);
   const [chapterLabel, setChapterLabel] = useState("Chapter...");
-  const [selectedVerse, setSelectedVerse] = useState(null);
   const [verseLabel, setVerseLabel] = useState("Verse...");
 
   useEffect(() => {
-    console.log("one");
     findBooks()
-      .then((data) => setBooks(data.items))
+      .then((data) => setSelectors({ ...selectors, books: data.items }))
       .then(() => setLoading(false));
   }, []);
 
   const selectBook = (order, label) => {
     // this gets weird because the book at index 0
     // has order = 1 and order is being used for lookups, etc.
-    setChapters(books[order - 1].chapters);
-    setSelectedBook(books[order - 1].order);
+    setSelectors({
+      ...selectors,
+      chapters: selectors.books[order - 1].chapters,
+      verses: 0,
+    });
+    setCurrentSelection({
+      ...currentSelection,
+      book: selectors.books[order - 1].order,
+      chapter: 0,
+      verse: 0,
+    });
     setBookLabel(label);
-    setSelectedChapter(0);
     setChapterLabel("Chapter...");
-    setVerses(0);
-    setSelectedVerse(null);
   };
 
   const selectChapter = async (c, label) => {
-    let verse_count = await getVerseCount(selectedBook, c);
-    setSelectedChapter(c);
+    let verse_count = await getVerseCount(currentSelection.book, c);
+    setCurrentSelection({ ...currentSelection, chapter: c, verse: 0 });
+    setSelectors({ ...selectors, verses: verse_count.count });
     setChapterLabel(label);
-    setVerses(verse_count.count);
-    setSelectedVerse(null);
     setVerseLabel("Verse...");
   };
 
   const selectVerse = async (v, label) => {
-    let verse = await getSelectedVerse(selectedBook, selectedChapter, v);
-    setSelectedVerse(verse.verse);
+    let verse = await getSelectedVerse(
+      currentSelection.book,
+      currentSelection.chapter,
+      v
+    );
+    setCurrentSelection({ ...currentSelection, verse: verse.verse });
     setVerseLabel(label);
   };
 
@@ -95,7 +103,7 @@ const Lookup = () => {
   };
 
   const slideVerse = async (direction) => {
-    let params = { direction, from: selectedVerse.id };
+    let params = { direction, from: currentSelection.verse.id };
     let response = await fetch("/api/verse/slide", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -104,17 +112,20 @@ const Lookup = () => {
     let verse = await response.json();
     let verse_count = await getVerseCount(verse.verse.b, verse.verse.c);
 
-    setVerses(verse_count.count);
-    setSelectedBook(verse.verse.b);
+    setSelectors({ ...selectors, verses: verse_count.count });
+    setCurrentSelection({
+      ...currentSelection,
+      book: verse.verse.b,
+      chapter: verse.verse.c,
+      verse: verse.verse,
+    });
     setBookLabel(verse.verse.title_short);
-    setSelectedChapter(verse.verse.c);
     setChapterLabel("Chapter " + verse.verse.c);
-    setSelectedVerse(verse.verse);
     setVerseLabel("Verse " + verse.verse.v);
   };
 
   const outputVerse = () => {
-    if (selectedVerse) {
+    if (currentSelection.verse) {
       return (
         <div
           className="w-full border-2 border-green-500 border-t-0 p-4 text-base rounded rounded-t-none"
@@ -122,10 +133,11 @@ const Lookup = () => {
         >
           <div className="text-sm font-mono border-b border-gray-400 mb-3 flex-between">
             <div className="font-bold">
-              {selectedVerse.title_short} {selectedVerse.c}:{selectedVerse.v}
+              {currentSelection.verse.title_short} {currentSelection.verse.c}:
+              {currentSelection.verse.v}
             </div>
             <div className="flex gap-3">
-              {selectedVerse.id > 1001001 && (
+              {currentSelection.verse.id > 1001001 && (
                 <button
                   type="button"
                   className="slideButton"
@@ -134,7 +146,7 @@ const Lookup = () => {
                   prev
                 </button>
               )}
-              {selectedVerse.id < 66022021 && (
+              {currentSelection.verse.id < 66022021 && (
                 <button
                   type="button"
                   className="slideButton"
@@ -145,7 +157,7 @@ const Lookup = () => {
               )}
             </div>
           </div>
-          {selectedVerse.t}
+          {currentSelection.verse.t}
         </div>
       );
     }
@@ -157,7 +169,7 @@ const Lookup = () => {
         Loading...
       </div>
     );
-  if (!books.length)
+  if (!selectors.books.length)
     return (
       <div className="text-xl text-green-600 p-4" data-testid="booknotfound">
         No Books Found
@@ -169,24 +181,24 @@ const Lookup = () => {
       <div className="flex gap-3 w-full text-lg" data-testid="selectors">
         <Selector
           label={bookLabel}
-          items={books}
+          items={selectors.books}
           value_field="order"
           label_field="title_short"
           select={selectBook}
         />
-        {chapters > 0 && (
+        {selectors.chapters > 0 && (
           <Selector
             label={chapterLabel}
-            items={formatChapters(chapters)}
+            items={formatChapters(selectors.chapters)}
             value_field="order"
             label_field="label"
             select={selectChapter}
           />
         )}
-        {verses > 0 && (
+        {selectors.verses > 0 && (
           <Selector
             label={verseLabel}
-            items={formatVerses(verses)}
+            items={formatVerses(selectors.verses)}
             value_field="order"
             label_field="label"
             select={selectVerse}
