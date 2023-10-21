@@ -1,7 +1,10 @@
 "use client";
 import { useState, useEffect, useContext } from "react";
 import Selector from "./Selector";
+import VerseOutput from "./VerseOutput";
 import { BibleContext } from "@app/context/BibleContext";
+import { LookupContext } from "@app/context/LookupContext";
+import { defaultLabels } from "@app/data/defaultLabels";
 
 const findBooks = async () => {
   const response = await fetch("/api/books");
@@ -11,16 +14,16 @@ const findBooks = async () => {
 };
 
 const Lookup = () => {
-  const { books, setBooks, selectors, setSelectors } = useContext(BibleContext);
-  const [currentSelection, setCurrentSelection] = useState({
-    book: 0,
-    chapter: 0,
-    verse: 0,
-  });
+  const { books, setBooks } = useContext(BibleContext);
+  const {
+    selectors,
+    setSelectors,
+    currentSelection,
+    setCurrentSelection,
+    labels,
+    setLabels,
+  } = useContext(LookupContext);
   const [isLoading, setLoading] = useState(true);
-  const [bookLabel, setBookLabel] = useState("Book...");
-  const [chapterLabel, setChapterLabel] = useState("Chapter...");
-  const [verseLabel, setVerseLabel] = useState("Verse...");
 
   useEffect(() => {
     findBooks()
@@ -42,16 +45,14 @@ const Lookup = () => {
       chapter: 0,
       verse: 0,
     });
-    setBookLabel(label);
-    setChapterLabel("Chapter...");
+    setLabels({ ...defaultLabels, book: label });
   };
 
   const selectChapter = async (c, label) => {
     let verse_count = await getVerseCount(currentSelection.book, c);
     setCurrentSelection({ ...currentSelection, chapter: c, verse: 0 });
     setSelectors({ ...selectors, verses: verse_count.count });
-    setChapterLabel(label);
-    setVerseLabel("Verse...");
+    setLabels({ ...labels, chapter: label, verse: "Verse..." });
   };
 
   const selectVerse = async (v, label) => {
@@ -60,8 +61,8 @@ const Lookup = () => {
       currentSelection.chapter,
       v
     );
-    setCurrentSelection({ ...currentSelection, verse: verse.verse });
-    setVerseLabel(label);
+    setCurrentSelection({ ...currentSelection, verse });
+    setLabels({ ...labels, verse: label });
   };
 
   const formatChapters = (chapterCount) => {
@@ -88,7 +89,7 @@ const Lookup = () => {
       body: JSON.stringify(params),
     });
     let verse = await response.json();
-    return verse;
+    return verse.verse;
   };
 
   const getVerseCount = async (book, chapter) => {
@@ -109,58 +110,22 @@ const Lookup = () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(params),
     });
-    let verse = await response.json();
-    let verse_count = await getVerseCount(verse.verse.b, verse.verse.c);
+    let jsonVerse = await response.json();
+    let verse = jsonVerse.verse;
+    let verse_count = await getVerseCount(verse.b, verse.c);
 
     setSelectors({ ...selectors, verses: verse_count.count });
     setCurrentSelection({
       ...currentSelection,
-      book: verse.verse.b,
-      chapter: verse.verse.c,
-      verse: verse.verse,
+      book: verse.b,
+      chapter: verse.c,
+      verse,
     });
-    setBookLabel(verse.verse.title_short);
-    setChapterLabel("Chapter " + verse.verse.c);
-    setVerseLabel("Verse " + verse.verse.v);
-  };
-
-  const outputVerse = () => {
-    if (currentSelection.verse) {
-      return (
-        <div
-          className="w-full border-2 border-green-500 border-t-0 p-4 text-base rounded rounded-t-none"
-          data-testid="versewrapper"
-        >
-          <div className="text-sm font-mono border-b border-gray-400 mb-3 flex-between">
-            <div className="font-bold">
-              {currentSelection.verse.title_short} {currentSelection.verse.c}:
-              {currentSelection.verse.v}
-            </div>
-            <div className="flex gap-3">
-              {currentSelection.verse.id > 1001001 && (
-                <button
-                  type="button"
-                  className="slideButton"
-                  onClick={() => slideVerse("prev")}
-                >
-                  prev
-                </button>
-              )}
-              {currentSelection.verse.id < 66022021 && (
-                <button
-                  type="button"
-                  className="slideButton"
-                  onClick={() => slideVerse("next")}
-                >
-                  next
-                </button>
-              )}
-            </div>
-          </div>
-          {currentSelection.verse.t}
-        </div>
-      );
-    }
+    setLabels({
+      book: verse.title_short,
+      chapter: "Chapter " + verse.c,
+      verse: "Verse " + verse.v,
+    });
   };
 
   if (isLoading)
@@ -180,7 +145,7 @@ const Lookup = () => {
     <div className="p-4">
       <div className="flex gap-3 w-full text-lg" data-testid="selectors">
         <Selector
-          label={bookLabel}
+          label={labels.book}
           items={selectors.books}
           value_field="order"
           label_field="title_short"
@@ -188,7 +153,7 @@ const Lookup = () => {
         />
         {selectors.chapters > 0 && (
           <Selector
-            label={chapterLabel}
+            label={labels.chapter}
             items={formatChapters(selectors.chapters)}
             value_field="order"
             label_field="label"
@@ -197,7 +162,7 @@ const Lookup = () => {
         )}
         {selectors.verses > 0 && (
           <Selector
-            label={verseLabel}
+            label={labels.verse}
             items={formatVerses(selectors.verses)}
             value_field="order"
             label_field="label"
@@ -205,7 +170,7 @@ const Lookup = () => {
           />
         )}
       </div>
-      {outputVerse()}
+      <VerseOutput slideVerse={slideVerse} />
     </div>
   );
 };

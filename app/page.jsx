@@ -1,10 +1,13 @@
 import Lookup from "@components/Lookup";
+import { LookupProvider } from "./context/LookupContext";
 
 const Home = async () => {
   return (
-    <div>
-      <Lookup />
-    </div>
+    <LookupProvider>
+      <div>
+        <Lookup />
+      </div>
+    </LookupProvider>
   );
 };
 
