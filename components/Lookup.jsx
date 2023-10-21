@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import Selector from "./Selector";
 import VerseOutput from "./VerseOutput";
 import { BibleContext } from "@app/context/BibleContext";
@@ -7,14 +7,13 @@ import { LookupContext } from "@app/context/LookupContext";
 import { defaultLabels } from "@app/data/defaultLabels";
 
 const findBooks = async () => {
-  const response = await fetch("/api/books");
-
+  const response = await fetch("/api/books", { cache: "no-store" });
   const res = await response.json();
   return res;
 };
 
 const Lookup = () => {
-  const { books, setBooks } = useContext(BibleContext);
+  const { books, setBooks, currentVersion } = useContext(BibleContext);
   const {
     selectors,
     setSelectors,
@@ -25,11 +24,24 @@ const Lookup = () => {
   } = useContext(LookupContext);
   const [isLoading, setLoading] = useState(true);
 
-  useEffect(() => {
+  if (selectors.books.length < 1) {
     findBooks()
       .then((data) => setSelectors({ ...selectors, books: data.items }))
       .then(() => setLoading(false));
-  }, []);
+  }
+
+  useEffect(() => {
+    if (
+      currentSelection.book &&
+      currentSelection.chapter &&
+      currentSelection.verse
+    ) {
+      selectVerse(
+        currentSelection.verse.v,
+        "Verse " + currentSelection.verse.v
+      );
+    }
+  }, [currentVersion]);
 
   const selectBook = (order, label) => {
     // this gets weird because the book at index 0
@@ -82,7 +94,7 @@ const Lookup = () => {
   };
 
   const getSelectedVerse = async (b, c, v) => {
-    let params = { b, c, v };
+    let params = { b, c, v, version: currentVersion.table };
     let response = await fetch("/api/verse", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -104,7 +116,11 @@ const Lookup = () => {
   };
 
   const slideVerse = async (direction) => {
-    let params = { direction, from: currentSelection.verse.id };
+    let params = {
+      direction,
+      from: currentSelection.verse.id,
+      version: currentVersion.table,
+    };
     let response = await fetch("/api/verse/slide", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

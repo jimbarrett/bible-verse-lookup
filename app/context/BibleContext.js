@@ -5,14 +5,20 @@ import { createContext } from "react";
 export const BibleContext = createContext();
 
 export const BibleProvider = ({ children }) => {
-  const [version, setVersion] = useState("t_kjv");
+  const [versions, setVersions] = useState([]);
   const [books, setBooks] = useState([]);
+  const [currentVersion, setCurrentVersion] = useState({
+    version: "King James Version",
+    table: "t_kjv",
+  });
 
   return (
     <BibleContext.Provider
       value={{
-        version,
-        setVersion,
+        currentVersion,
+        setCurrentVersion,
+        versions,
+        setVersions,
         books,
         setBooks,
       }}

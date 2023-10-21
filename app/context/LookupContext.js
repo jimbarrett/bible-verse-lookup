@@ -4,18 +4,7 @@ import { useState } from "react";
 import { createContext } from "react";
 export const LookupContext = createContext();
 import { defaultLabels } from "@app/data/defaultLabels";
-
-const defaultSelections = {
-  book: 0,
-  chapter: 0,
-  verse: 0,
-};
-
-// const defaultLabels = {
-//   book: "Book...",
-//   chapter: "Chapter...",
-//   verse: "Verse...",
-// };
+import { defaultSelections } from "@app/data/defaultSelections";
 
 export const LookupProvider = ({ children }) => {
   const [selectors, setSelectors] = useState({

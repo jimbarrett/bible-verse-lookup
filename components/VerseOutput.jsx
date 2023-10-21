@@ -2,7 +2,7 @@ import { LookupContext } from "@app/context/LookupContext";
 import { useContext } from "react";
 
 const VerseOutput = ({ slideVerse }) => {
-  const { currentSelection, setCurrentSelection } = useContext(LookupContext);
+  const { currentSelection } = useContext(LookupContext);
 
   if (currentSelection.verse) {
     return (
