@@ -1,6 +1,6 @@
 "use client";
 import { BibleContext } from "@app/context/BibleContext";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 const fetchVersions = async () => {
   const response = await fetch("/api/versions", { cache: "no-store" });
@@ -11,9 +11,12 @@ const fetchVersions = async () => {
 const VersionSelector = () => {
   const { versions, setVersions, currentVersion, setCurrentVersion, books } =
     useContext(BibleContext);
-  if (versions.length < 1) {
-    fetchVersions().then((data) => setVersions(data.versions));
-  }
+
+  useEffect(() => {
+    if (versions.length < 1) {
+      fetchVersions().then((data) => setVersions(data.versions));
+    }
+  }, []);
 
   const [showDropdown, setShowDropdown] = useState(false);
 

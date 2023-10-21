@@ -6,7 +6,6 @@ export const BibleContext = createContext();
 
 export const BibleProvider = ({ children }) => {
   const [versions, setVersions] = useState([]);
-  const [books, setBooks] = useState([]);
   const [currentVersion, setCurrentVersion] = useState({
     version: "King James Version",
     table: "t_kjv",
@@ -19,8 +18,6 @@ export const BibleProvider = ({ children }) => {
         setCurrentVersion,
         versions,
         setVersions,
-        books,
-        setBooks,
       }}
     >
       <div>{children}</div>

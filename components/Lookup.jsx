@@ -7,13 +7,13 @@ import { LookupContext } from "@app/context/LookupContext";
 import { defaultLabels } from "@app/data/defaultLabels";
 
 const findBooks = async () => {
-  const response = await fetch("/api/books", { cache: "no-store" });
+  const response = await fetch("/api/books");
   const res = await response.json();
   return res;
 };
 
 const Lookup = () => {
-  const { books, setBooks, currentVersion } = useContext(BibleContext);
+  const { currentVersion } = useContext(BibleContext);
   const {
     selectors,
     setSelectors,
@@ -24,11 +24,11 @@ const Lookup = () => {
   } = useContext(LookupContext);
   const [isLoading, setLoading] = useState(true);
 
-  if (selectors.books.length < 1) {
+  useEffect(() => {
     findBooks()
       .then((data) => setSelectors({ ...selectors, books: data.items }))
       .then(() => setLoading(false));
-  }
+  }, []);
 
   useEffect(() => {
     if (
