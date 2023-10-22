@@ -24,13 +24,16 @@ const VersionSelector = () => {
   };
 
   return (
-    <PlainSelector
-      value={currentVersion.version}
-      items={versions}
-      value_field="id"
-      label_field="version"
-      select={doVersionSelect}
-    />
+    <>
+      <label className="pr-2 text-xs italic">Select Version</label>
+      <PlainSelector
+        value={currentVersion.version}
+        items={versions}
+        value_field="id"
+        label_field="version"
+        select={doVersionSelect}
+      />
+    </>
   );
 };
 
