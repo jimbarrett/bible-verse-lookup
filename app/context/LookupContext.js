@@ -14,6 +14,7 @@ export const LookupProvider = ({ children }) => {
   });
   const [currentSelection, setCurrentSelection] = useState(defaultSelections);
   const [labels, setLabels] = useState(defaultLabels);
+  const [perPage, setPerPage] = useState(1);
 
   return (
     <LookupContext.Provider
@@ -24,6 +25,8 @@ export const LookupProvider = ({ children }) => {
         setCurrentSelection,
         labels,
         setLabels,
+        perPage,
+        setPerPage,
       }}
     >
       <div>{children}</div>

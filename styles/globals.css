@@ -41,8 +41,12 @@ nav.mainNav {
   @apply w-full p-2 bg-green-600 bg-opacity-60 font-semibold text-gray-100 flex justify-between items-center cursor-pointer;
 }
 
+.plainSelector {
+  @apply p-2 border border-gray-200 rounded cursor-pointer flex items-center gap-2 text-gray-600 w-full justify-between z-20;
+}
+
 .dropDown {
-  @apply w-full absolute h-72 overflow-auto py-3 text-base bg-white shadow;
+  @apply w-full absolute max-h-72 overflow-auto py-3 text-base bg-white shadow z-20;
 }
 
 .slideButton {

@@ -6,7 +6,7 @@ let db = null;
 
 export async function POST(req, res) {
   const data = await req.json();
-  const { b, c, v, version } = data;
+  const { b, c, v, version, take } = data;
   if (!db) {
     db = await open({
       filename: "./dbs/bible-sqlite.db",
@@ -19,11 +19,11 @@ export async function POST(req, res) {
      FROM ${version} v 
      LEFT JOIN book_info b 
        ON v.b = b.\`order\` 
-     WHERE v.b=? AND v.c=? AND v.v=?`,
-    [b, c, v]
+     WHERE v.b=? AND v.c=? AND v.v>=? LIMIT ?`,
+    [b, c, v, take]
   );
 
   return NextResponse.json({
-    verse: verse[0],
+    verse,
   });
 }

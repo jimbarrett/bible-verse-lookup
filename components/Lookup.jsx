@@ -5,6 +5,7 @@ import VerseOutput from "./VerseOutput";
 import { BibleContext } from "@app/context/BibleContext";
 import { LookupContext } from "@app/context/LookupContext";
 import { defaultLabels } from "@app/data/defaultLabels";
+import LookupBar from "./LookupBar";
 
 const findBooks = async () => {
   const response = await fetch("/api/books");
@@ -21,6 +22,7 @@ const Lookup = () => {
     setCurrentSelection,
     labels,
     setLabels,
+    perPage,
   } = useContext(LookupContext);
   const [isLoading, setLoading] = useState(true);
 
@@ -37,11 +39,11 @@ const Lookup = () => {
       currentSelection.verse
     ) {
       selectVerse(
-        currentSelection.verse.v,
-        "Verse " + currentSelection.verse.v
+        currentSelection.verse[0].v,
+        "Verse " + currentSelection.verse[0].v
       );
     }
-  }, [currentVersion]);
+  }, [currentVersion, perPage]);
 
   const selectBook = (order, label) => {
     // this gets weird because the book at index 0
@@ -94,7 +96,7 @@ const Lookup = () => {
   };
 
   const getSelectedVerse = async (b, c, v) => {
-    let params = { b, c, v, version: currentVersion.table };
+    let params = { b, c, v, version: currentVersion.table, take: perPage };
     let response = await fetch("/api/verse", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -116,10 +118,15 @@ const Lookup = () => {
   };
 
   const slideVerse = async (direction) => {
+    const referenceID =
+      direction == "prev"
+        ? currentSelection.verse[0].id
+        : currentSelection.verse[currentSelection.verse.length - 1].id;
     let params = {
       direction,
-      from: currentSelection.verse.id,
+      from: referenceID,
       version: currentVersion.table,
+      take: perPage,
     };
     let response = await fetch("/api/verse/slide", {
       method: "POST",
@@ -127,20 +134,28 @@ const Lookup = () => {
       body: JSON.stringify(params),
     });
     let jsonVerse = await response.json();
-    let verse = jsonVerse.verse;
-    let verse_count = await getVerseCount(verse.b, verse.c);
+    // TODO :
+    // have to manually sort these as I couldn't find a way to do this sensibly in sql
+    // find a better way.
+    if (direction == "prev") {
+      jsonVerse.verse.sort((a, b) => {
+        return a.id > b.id;
+      });
+    }
+    let verses = jsonVerse.verse;
+    let verse_count = await getVerseCount(verses[0].b, verses[0].c);
 
     setSelectors({ ...selectors, verses: verse_count.count });
     setCurrentSelection({
       ...currentSelection,
-      book: verse.b,
-      chapter: verse.c,
-      verse,
+      book: verses[0].b,
+      chapter: verses[0].c,
+      verse: verses,
     });
     setLabels({
-      book: verse.title_short,
-      chapter: "Chapter " + verse.c,
-      verse: "Verse " + verse.v,
+      book: verses[0].title_short,
+      chapter: "Chapter " + verses[0].c,
+      verse: "Verse " + verses[0].v,
     });
   };
 
@@ -159,6 +174,7 @@ const Lookup = () => {
 
   return (
     <div className="p-4">
+      <LookupBar />
       <div className="flex gap-3 w-full text-lg" data-testid="selectors">
         <Selector
           label={labels.book}

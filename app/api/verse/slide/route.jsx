@@ -6,7 +6,7 @@ let db = null;
 
 export async function POST(req, res) {
   const data = await req.json();
-  const { direction, from } = data;
+  const { direction, from, take } = data;
   let comp = ">",
     dir = "ASC";
   if (direction == "prev") {
@@ -31,10 +31,11 @@ export async function POST(req, res) {
       from +
       ` ORDER BY v.id ` +
       dir +
-      ` LIMIT 1`
+      ` LIMIT ?`,
+    [take]
   );
 
   return NextResponse.json({
-    verse: verse[0],
+    verse,
   });
 }

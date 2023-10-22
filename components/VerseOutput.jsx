@@ -4,6 +4,8 @@ import { useContext } from "react";
 const VerseOutput = ({ slideVerse }) => {
   const { currentSelection } = useContext(LookupContext);
 
+  const verses = currentSelection.verse;
+
   if (currentSelection.verse) {
     return (
       <div
@@ -12,11 +14,17 @@ const VerseOutput = ({ slideVerse }) => {
       >
         <div className="text-sm font-mono border-b border-gray-400 mb-3 flex-between">
           <div className="font-bold">
-            {currentSelection.verse.title_short} {currentSelection.verse.c}:
-            {currentSelection.verse.v}
+            {verses[0].title_short} {verses[0].c}:{verses[0].v}
+            {verses.length > 1 && (
+              <>
+                <span className="px-1">-</span>
+                {verses[verses.length - 1].title_short}{" "}
+                {verses[verses.length - 1].c}:{verses[verses.length - 1].v}
+              </>
+            )}
           </div>
           <div className="flex gap-3">
-            {currentSelection.verse.id > 1001001 && (
+            {verses[0].id > 1001001 && (
               <button
                 type="button"
                 className="slideButton"
@@ -25,7 +33,7 @@ const VerseOutput = ({ slideVerse }) => {
                 prev
               </button>
             )}
-            {currentSelection.verse.id < 66022021 && (
+            {verses[verses.length - 1].id < 66022021 && (
               <button
                 type="button"
                 className="slideButton"
@@ -36,7 +44,16 @@ const VerseOutput = ({ slideVerse }) => {
             )}
           </div>
         </div>
-        {currentSelection.verse.t}
+        {verses.map((verse) => {
+          return (
+            <div className="inline px-1" key={verse.v}>
+              <span className="font-bold italic text-xs text-gray-400 relative bottom-1">
+                *
+              </span>{" "}
+              {verse.t}
+            </div>
+          );
+        })}
       </div>
     );
   }
