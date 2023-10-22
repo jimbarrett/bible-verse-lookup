@@ -14,7 +14,7 @@ const PerPageSelector = () => {
 
   return (
     <>
-      <label className="pr-2 text-sm">Results per page</label>
+      <label className="pr-2 text-xs italic">Results per page</label>
       <PlainSelector
         value={perPage}
         items={items}

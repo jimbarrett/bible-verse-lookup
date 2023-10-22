@@ -8,8 +8,8 @@
   position: fixed;
   display: flex;
   justify-content: center;
-  padding: 120px 24px 160px 24px;
   pointer-events: none;
+  @apply p-6;
 }
 
 .main:after {
@@ -31,7 +31,7 @@
 
 /* Navigation */
 nav.mainNav {
-  @apply w-full mb-16 p-3;
+  @apply w-full mb-6 p-3;
   @apply bg-green-900;
   color: #eff5f7;
 }

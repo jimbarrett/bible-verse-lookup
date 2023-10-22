@@ -8,7 +8,7 @@ import PerPageSelector from "./PerPageSelector";
 const LookupBar = () => {
   const { perPage, setPerPage } = useContext(LookupContext);
   return (
-    <div className="w-full flex justify-between pb-4 items-center">
+    <div className="w-full flex justify-between pb-4 items-end">
       <div className="w-1/5">
         <VersionSelector />
       </div>

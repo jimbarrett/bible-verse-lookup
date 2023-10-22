@@ -173,7 +173,7 @@ const Lookup = () => {
     );
 
   return (
-    <div className="p-4">
+    <div className="px-4">
       <LookupBar />
       <div className="flex gap-3 w-full text-lg" data-testid="selectors">
         <Selector
