@@ -25,3 +25,5 @@ Open [http://localhost:3000](http://localhost:3000) and you're all set.
 ### Update: 09/28/23
 I've added jest and written the first few unit tests for this. I'm mostly only doing this to keep the habit alive.
 
+### Update: 10/24/23
+I've finally gotten back to this and added the ability to compare different versions of the bible side by side. Also did a lot of code cleanup and minor restyling (buttons, etc)
