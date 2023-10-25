@@ -12,7 +12,7 @@ const LookupBar = () => {
       <div className="w-1/5">
         <VersionSelector />
       </div>
-      <div className="w-1/5">
+      <div className="">
         <PerPageSelector />
       </div>
     </div>

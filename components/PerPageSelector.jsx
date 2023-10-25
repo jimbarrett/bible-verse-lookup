@@ -10,7 +10,10 @@ const PerPageSelector = () => {
     setPerPage(item.k);
   };
 
-  const items = [{ k: 1 }, { k: 2 }, { k: 3 }, { k: 4 }, { k: 5 }];
+  const items = [];
+  for (let i = 1; i <= 10; i++) {
+    items.push({ k: i });
+  }
 
   return (
     <>
