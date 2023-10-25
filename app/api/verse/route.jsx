@@ -20,7 +20,8 @@ export async function POST(req, res) {
      LEFT JOIN ${compare} comp on v.id = comp.id
      LEFT JOIN book_info b 
        ON v.b = b.\`order\` 
-     WHERE v.b=? AND v.c=? AND v.v>=? LIMIT ?`,
+       WHERE v.id >= (SELECT id FROM ${version} WHERE b=? AND c=? and v=?)
+     LIMIT ?`,
     [b, c, v, take]
   );
 
