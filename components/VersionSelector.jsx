@@ -10,7 +10,7 @@ const fetchVersions = async () => {
 };
 
 const VersionSelector = () => {
-  const { versions, setVersions, currentVersion, setCurrentVersion, books } =
+  const { versions, setVersions, selectedVersion, setSelectedVersion, books } =
     useContext(BibleContext);
 
   useEffect(() => {
@@ -20,14 +20,14 @@ const VersionSelector = () => {
   }, []);
 
   const doVersionSelect = (data) => {
-    setCurrentVersion(data);
+    setSelectedVersion(data);
   };
 
   return (
     <>
       <label className="pr-2 text-xs italic">Select Version</label>
       <PlainSelector
-        value={currentVersion.version}
+        value={selectedVersion.version}
         items={versions}
         value_field="id"
         label_field="version"

@@ -6,16 +6,22 @@ export const BibleContext = createContext();
 
 export const BibleProvider = ({ children }) => {
   const [versions, setVersions] = useState([]);
-  const [currentVersion, setCurrentVersion] = useState({
+  const [selectedVersion, setSelectedVersion] = useState({
     version: "King James Version",
     table: "t_kjv",
+  });
+  const [compareVersion, setCompareVersion] = useState({
+    version: "Bible in Basic English",
+    table: "t_bbe",
   });
 
   return (
     <BibleContext.Provider
       value={{
-        currentVersion,
-        setCurrentVersion,
+        selectedVersion,
+        setSelectedVersion,
+        compareVersion,
+        setCompareVersion,
         versions,
         setVersions,
       }}

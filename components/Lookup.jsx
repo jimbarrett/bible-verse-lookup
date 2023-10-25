@@ -1,7 +1,7 @@
 "use client";
 import { useState, useContext, useEffect } from "react";
 import Selector from "./Selector";
-import VerseOutput from "./VerseOutput";
+import VerseBox from "./VerseBox";
 import { BibleContext } from "@app/context/BibleContext";
 import { LookupContext } from "@app/context/LookupContext";
 import { defaultLabels } from "@app/data/defaultLabels";
@@ -14,7 +14,7 @@ const findBooks = async () => {
 };
 
 const Lookup = () => {
-  const { currentVersion } = useContext(BibleContext);
+  const { selectedVersion, compareVersion } = useContext(BibleContext);
   const {
     selectors,
     setSelectors,
@@ -43,11 +43,9 @@ const Lookup = () => {
         "Verse " + currentSelection.verse[0].v
       );
     }
-  }, [currentVersion, perPage]);
+  }, [selectedVersion, compareVersion, perPage]);
 
   const selectBook = (order, label) => {
-    // this gets weird because the book at index 0
-    // has order = 1 and order is being used for lookups, etc.
     setSelectors({
       ...selectors,
       chapters: selectors.books[order - 1].chapters,
@@ -96,7 +94,14 @@ const Lookup = () => {
   };
 
   const getSelectedVerse = async (b, c, v) => {
-    let params = { b, c, v, version: currentVersion.table, take: perPage };
+    let params = {
+      b,
+      c,
+      v,
+      version: selectedVersion.table,
+      compare: compareVersion.table,
+      take: perPage,
+    };
     let response = await fetch("/api/verse", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -125,7 +130,8 @@ const Lookup = () => {
     let params = {
       direction,
       from: referenceID,
-      version: currentVersion.table,
+      version: selectedVersion.table,
+      compare: compareVersion.table,
       take: perPage,
     };
     let response = await fetch("/api/verse/slide", {
@@ -202,7 +208,7 @@ const Lookup = () => {
           />
         )}
       </div>
-      <VerseOutput slideVerse={slideVerse} />
+      <VerseBox slideVerse={slideVerse} />
     </div>
   );
 };
