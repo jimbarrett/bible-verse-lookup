@@ -7,7 +7,7 @@ import PlainSelector from "./PlainSelector";
 const ComparisonSelector = () => {
   const { versions, selectedVersion, compareVersion, setCompareVersion } =
     useContext(BibleContext);
-  const { compareActive, setCompareActive } = useContext(LookupContext);
+  const { setCompareActive } = useContext(LookupContext);
 
   useEffect(() => {
     if (!compareVersion.version) setCompareVersion(selectedVersion);
