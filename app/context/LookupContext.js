@@ -15,6 +15,7 @@ export const LookupProvider = ({ children }) => {
   const [currentSelection, setCurrentSelection] = useState(defaultSelections);
   const [labels, setLabels] = useState(defaultLabels);
   const [perPage, setPerPage] = useState(1);
+  const [compareActive, setCompareActive] = useState(false);
 
   return (
     <LookupContext.Provider
@@ -27,6 +28,8 @@ export const LookupProvider = ({ children }) => {
         setLabels,
         perPage,
         setPerPage,
+        compareActive,
+        setCompareActive,
       }}
     >
       <div>{children}</div>

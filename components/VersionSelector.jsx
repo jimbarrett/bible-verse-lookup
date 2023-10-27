@@ -1,6 +1,6 @@
 "use client";
 import { BibleContext } from "@app/context/BibleContext";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import PlainSelector from "./PlainSelector";
 
 const fetchVersions = async () => {
@@ -10,7 +10,7 @@ const fetchVersions = async () => {
 };
 
 const VersionSelector = () => {
-  const { versions, setVersions, selectedVersion, setSelectedVersion, books } =
+  const { versions, setVersions, selectedVersion, setSelectedVersion } =
     useContext(BibleContext);
 
   useEffect(() => {

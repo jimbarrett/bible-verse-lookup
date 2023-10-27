@@ -5,10 +5,9 @@ import ComparisonSelector from "./ComparisonSelector";
 import Verse from "./Verse";
 
 const VerseBox = ({ slideVerse }) => {
-  const { currentSelection } = useContext(LookupContext);
-  const { selectedVersion } = useContext(BibleContext);
-
-  const [compareActive, setCompareActive] = useState(false);
+  const { currentSelection, compareActive, setCompareActive } =
+    useContext(LookupContext);
+  const { selectedVersion, compareVersion } = useContext(BibleContext);
 
   const verses = currentSelection.verse;
 
@@ -84,30 +83,10 @@ const VerseBox = ({ slideVerse }) => {
         </div>
 
         <div className="text-sm font-mono border-b border-gray-400 mb-3 flex py-1 items-center">
-          <div className="w-1/2 p-2">
-            {selectedVersion.version}
-            {!compareActive && (
-              <button className="toggleButton ml-2" onClick={toggleCompare}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-5 h-5"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"
-                  />
-                </svg>
-              </button>
-            )}
-          </div>
+          <div className="w-1/2 p-2">{selectedVersion.version}</div>
           {compareActive && (
-            <div className="w-1/2 flex flex-row items-center">
-              <ComparisonSelector />
+            <div className="w-1/2 flex flex-row items-center justify-between">
+              {compareVersion.version}
               <button
                 onClick={toggleCompare}
                 className="toggleButtonCancel ml-2"
@@ -117,14 +96,14 @@ const VerseBox = ({ slideVerse }) => {
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  strokeWidth={1.8}
+                  strokeWidth={1.5}
                   stroke="currentColor"
-                  className="w-5 h-5"
+                  className="w-4 h-4"
                 >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    d="M6 18L18 6M6 6l12 12"
                   />
                 </svg>
               </button>

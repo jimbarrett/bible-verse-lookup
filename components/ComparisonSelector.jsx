@@ -7,6 +7,7 @@ import PlainSelector from "./PlainSelector";
 const ComparisonSelector = () => {
   const { versions, selectedVersion, compareVersion, setCompareVersion } =
     useContext(BibleContext);
+  const { compareActive, setCompareActive } = useContext(LookupContext);
 
   useEffect(() => {
     if (!compareVersion.version) setCompareVersion(selectedVersion);
@@ -16,8 +17,21 @@ const ComparisonSelector = () => {
     setCompareVersion(data);
   };
 
+  const toggleCompare = () => {
+    setCompareActive((prev) => !prev);
+  };
+
   return (
     <>
+      <label className="pr-2 text-xs italic">
+        Compare Version{" "}
+        <span
+          onClick={toggleCompare}
+          className="text-xs italic text-blue-600 hover:text-blue-400 cursor-pointer ml-1 hover:underline"
+        >
+          (Cancel)
+        </span>
+      </label>
       <PlainSelector
         value={compareVersion.version}
         items={versions}

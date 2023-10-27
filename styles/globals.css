@@ -58,5 +58,5 @@ nav.mainNav {
 }
 
 .toggleButtonCancel {
-  @apply bg-gray-300 hover:bg-gray-200 text-red-600 p-1 rounded-full text-xs align-middle;
+  @apply bg-red-700 text-white p-0.5 hover:bg-red-600 rounded-full text-xs align-middle;
 }
