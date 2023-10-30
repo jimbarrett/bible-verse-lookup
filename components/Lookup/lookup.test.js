@@ -1,5 +1,7 @@
 import Lookup from "@components/Lookup";
-import { render, screen, act } from "../node_modules/@testing-library/react";
+import { render, screen, act } from "../../node_modules/@testing-library/react";
+import { BibleProvider } from "@app/context/BibleContext";
+import { LookupProvider } from "@app/context/LookupContext";
 
 beforeEach(() => {
   fetch.resetMocks();
@@ -11,7 +13,13 @@ describe("Lookup component", () => {
     fetch.mockResponse(JSON.stringify({ items: [] }));
 
     await act(() => {
-      render(<Lookup />);
+      render(
+        <BibleProvider>
+          <LookupProvider>
+            <Lookup />
+          </LookupProvider>
+        </BibleProvider>
+      );
     });
     await screen.getByTestId("booknotfound");
   });
@@ -26,7 +34,13 @@ describe("Lookup component", () => {
     ];
     fetch.mockResponse(JSON.stringify({ items: booksFound }));
     await act(() => {
-      render(<Lookup />);
+      render(
+        <BibleProvider>
+          <LookupProvider>
+            <Lookup />
+          </LookupProvider>
+        </BibleProvider>
+      );
     });
 
     expect(await screen.getByText("Book...")).toBeInTheDocument();

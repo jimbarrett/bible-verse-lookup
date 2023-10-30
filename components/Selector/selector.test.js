@@ -5,7 +5,7 @@ import {
   screen,
   within,
   act,
-} from "../node_modules/@testing-library/react";
+} from "../../node_modules/@testing-library/react";
 
 beforeEach(() => {
   fetch.resetMocks();
