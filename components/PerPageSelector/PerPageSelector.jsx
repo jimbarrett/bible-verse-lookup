@@ -1,7 +1,7 @@
 "use client";
 import { useContext, useState } from "react";
 import { LookupContext } from "@app/context/LookupContext";
-import PlainSelector from "./PlainSelector";
+import PlainSelector from "@components/PlainSelector";
 
 const PerPageSelector = () => {
   const { perPage, setPerPage } = useContext(LookupContext);

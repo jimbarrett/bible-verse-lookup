@@ -1,7 +1,7 @@
 "use client";
 import { BibleContext } from "@app/context/BibleContext";
 import { useContext, useEffect } from "react";
-import PlainSelector from "./PlainSelector";
+import PlainSelector from "@components/PlainSelector";
 
 const fetchVersions = async () => {
   const response = await fetch("/api/versions", { cache: "no-store" });

@@ -1,10 +1,10 @@
 "use client";
 
 import { LookupContext } from "@app/context/LookupContext";
-import VersionSelector from "./VersionSelector";
+import VersionSelector from "@components/VersionSelector";
 import { useContext } from "react";
-import PerPageSelector from "./PerPageSelector";
-import ComparisonSelector from "./ComparisonSelector";
+import PerPageSelector from "@components/PerPageSelector";
+import ComparisonSelector from "@components/ComparisonSelector";
 
 const LookupBar = () => {
   const { compareActive, setCompareActive, currentSelection } =

@@ -1,11 +1,11 @@
 "use client";
 import { useState, useContext, useEffect } from "react";
-import Selector from "./Selector";
-import VerseBox from "./VerseBox";
+import Selector from "@components/Selector";
+import VerseBox from "@components/VerseBox";
 import { BibleContext } from "@app/context/BibleContext";
 import { LookupContext } from "@app/context/LookupContext";
 import { defaultLabels } from "@app/data/defaultLabels";
-import LookupBar from "./LookupBar";
+import LookupBar from "@components/LookupBar";
 
 const findBooks = async () => {
   const response = await fetch("/api/books");
