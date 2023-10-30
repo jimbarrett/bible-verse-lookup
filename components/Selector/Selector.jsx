@@ -10,6 +10,7 @@ const Selector = ({ label, items, value_field, label_field, select }) => {
       {showDropdown && (
         <div
           className="absolute top-0 bottom-0 left-0 right-0"
+          data-testid="selector-backdrop"
           onClick={() => setShowDropdown(false)}
         ></div>
       )}

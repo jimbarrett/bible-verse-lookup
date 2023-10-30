@@ -42,6 +42,24 @@ describe("Selector component", () => {
     expect(screen.getByTestId("dropdown")).toBeInTheDocument();
   });
 
+  it("selector backdrop is displayed when the dropdown is active", async () => {
+    await act(() => {
+      const container = render(<Selector {...params} />);
+    });
+    fireEvent.click(screen.getByText("Label"));
+    expect(screen.getByTestId("selector-backdrop")).toBeInTheDocument();
+  });
+
+  it("clicking selector backdrop closes the dropdown", async () => {
+    await act(() => {
+      const container = render(<Selector {...params} />);
+    });
+    fireEvent.click(screen.getByText("Label"));
+    fireEvent.click(screen.getByTestId("selector-backdrop"));
+    expect(screen.queryByTestId("dropdown")).toBe(null);
+    expect(screen.queryByTestId("selector-backdrop")).toBe(null);
+  });
+
   it("calls callback on list item click", async () => {
     await act(() => {
       const container = render(<Selector {...params} />);
