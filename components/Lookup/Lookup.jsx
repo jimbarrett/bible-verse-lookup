@@ -33,7 +33,6 @@ const Lookup = () => {
   }, []);
 
   useEffect(() => {
-    console.log("shit");
     if (
       currentSelection.book &&
       currentSelection.chapter &&
@@ -69,17 +68,13 @@ const Lookup = () => {
   };
 
   const selectVerse = async (v, label) => {
-    console.log("one");
     let verse = await getSelectedVerse(
       currentSelection.book,
       currentSelection.chapter,
       v
     );
-    console.log("two");
     setCurrentSelection({ ...currentSelection, verse });
-    console.log("three");
     setLabels({ ...labels, verse: label });
-    console.log("four");
   };
 
   const formatChapters = (chapterCount) => {

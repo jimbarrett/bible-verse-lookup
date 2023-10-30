@@ -1,10 +1,9 @@
 import { LookupContext } from "@app/context/LookupContext";
 import { BibleContext } from "@app/context/BibleContext";
 import { useContext, useEffect, useState } from "react";
-import Verse from "@components/VerseBox";
+import Verse from "@components/Verse";
 
 const VerseBox = ({ slideVerse }) => {
-  console.log("versebox");
   const { currentSelection, compareActive, setCompareActive } =
     useContext(LookupContext);
   const { selectedVersion, compareVersion } = useContext(BibleContext);

@@ -53,7 +53,6 @@ export const slideVerse = async (direction) => {
   // If we have a comparison we have to do this whole thing over again.
   // TODO : Fix this!
   if (compareVersion) {
-    console.log("compare");
     let params = {
       direction,
       from: referenceID,
@@ -78,6 +77,5 @@ export const slideVerse = async (direction) => {
       chapter: compVerses[0].c,
       verse: compVerses,
     });
-    console.log(compareSelection);
   }
 };
