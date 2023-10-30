@@ -2,7 +2,7 @@
 import { BibleContext } from "@app/context/BibleContext";
 import { LookupContext } from "@app/context/LookupContext";
 import { useContext, useEffect } from "react";
-import PlainSelector from "./PlainSelector";
+import PlainSelector from "@components/PlainSelector";
 
 const ComparisonSelector = () => {
   const { versions, selectedVersion, compareVersion, setCompareVersion } =
