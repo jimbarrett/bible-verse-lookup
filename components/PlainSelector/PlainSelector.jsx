@@ -10,6 +10,7 @@ const PlainSelector = ({ value, items, value_field, label_field, select }) => {
       {showDropdown && (
         <div
           className="absolute top-0 bottom-0 left-0 right-0"
+          data-testid="selector-backdrop"
           onClick={() => setShowDropdown(false)}
         ></div>
       )}
@@ -35,7 +36,7 @@ const PlainSelector = ({ value, items, value_field, label_field, select }) => {
           </svg>
         </div>
         {showDropdown && (
-          <div className="dropDown">
+          <div className="dropDown" data-testid="dropdown">
             {items.map((i) => {
               return (
                 <span

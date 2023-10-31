@@ -1,4 +1,4 @@
-import Selector from "./Selector";
+import Selector from ".";
 import {
   fireEvent,
   render,
