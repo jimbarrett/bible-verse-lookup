@@ -1,58 +1,6 @@
 import Verse from "./Verse";
 import { render, screen, act } from "../../node_modules/@testing-library/react";
-
-const singleVerse = [
-  {
-    id: 1,
-    b: 1,
-    title_short: "One",
-    c: 1,
-    v: 1,
-    t: "First Verse",
-    compared: "Compared First Verse",
-  },
-];
-
-const versesNextChapter = [
-  {
-    id: 1,
-    b: 1,
-    title_short: "One",
-    c: 1,
-    v: 1,
-    t: "First Verse",
-    compared: "Compared First Verse",
-  },
-  {
-    id: 2,
-    b: 1,
-    title_short: "One",
-    c: 2,
-    v: 1,
-    t: "Second Verse",
-    compared: "Compared Second Verse",
-  },
-];
-const versesNextBook = [
-  {
-    id: 1,
-    b: 1,
-    title_short: "One",
-    c: 2,
-    v: 1,
-    t: "First Verse",
-    compared: "Compared First Verse",
-  },
-  {
-    id: 2,
-    b: 2,
-    title_short: "Two",
-    c: 1,
-    v: 1,
-    t: "Second First Verse",
-    compared: "Compared Second First Verse",
-  },
-];
+import { singleVerse, versesNextBook, versesNextChapter } from "@data/verse";
 
 describe("Verse component", () => {
   it("renders single verse", async () => {
