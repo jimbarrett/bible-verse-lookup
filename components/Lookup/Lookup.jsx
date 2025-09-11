@@ -1,5 +1,5 @@
 "use client";
-import { useState, useContext, useEffect, useCallback } from "react";
+import { useState, useContext, useEffect } from "react";
 import Selector from "@components/Selector";
 import VerseBox from "@components/VerseBox";
 import { BibleContext } from "@app/context/BibleContext";
@@ -25,54 +25,23 @@ const Lookup = () => {
     perPage,
   } = useContext(LookupContext);
   const [isLoading, setLoading] = useState(true);
+  const [hasMounted, setHasMounted] = useState(false);
 
-  const getVerseCount = useCallback(async (book, chapter) => {
-    let params = { b: book, c: chapter };
-    let response = await fetch("/api/verse/count", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(params),
-    });
-    let verse_count = await response.json();
-    return verse_count;
+  // Ensure component has mounted before showing dynamic content
+  useEffect(() => {
+    setHasMounted(true);
   }, []);
-
-  const getSelectedVerse = useCallback(async (b, c, v) => {
-    let params = {
-      b,
-      c,
-      v,
-      version: selectedVersion.table,
-      compare: compareVersion.table,
-      take: perPage,
-    };
-    let response = await fetch("/api/verse", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(params),
-    });
-    let verse = await response.json();
-    return verse.verse;
-  }, [selectedVersion.table, compareVersion.table, perPage]);
-
-  const selectVerse = useCallback(async (v, label) => {
-    let verse = await getSelectedVerse(
-      currentSelection.book,
-      currentSelection.chapter,
-      v
-    );
-    setCurrentSelection(prev => ({ ...prev, verse }));
-    setLabels(prev => ({ ...prev, verse: label }));
-  }, [currentSelection.book, currentSelection.chapter, getSelectedVerse, setCurrentSelection, setLabels]);
 
   useEffect(() => {
     findBooks()
-      .then((data) => setSelectors(prevSelectors => ({ ...prevSelectors, books: data.items })))
+      .then((data) => setSelectors({ ...selectors, books: data.items }))
       .then(() => setLoading(false));
-  }, [setSelectors]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (
+      hasMounted &&
       currentSelection.book &&
       currentSelection.chapter &&
       currentSelection.verse
@@ -82,7 +51,8 @@ const Lookup = () => {
         "Verse " + currentSelection.verse[0].v
       );
     }
-  }, [selectedVersion, compareVersion, perPage, currentSelection.book, currentSelection.chapter, currentSelection.verse, selectVerse]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasMounted, selectedVersion, compareVersion, perPage]);
 
   const selectBook = (order, label) => {
     setSelectors({
@@ -97,6 +67,16 @@ const Lookup = () => {
       verse: 0,
     });
     setLabels({ ...defaultLabels, book: label });
+  };
+
+  const selectVerse = async (v, label) => {
+    let verse = await getSelectedVerse(
+      currentSelection.book,
+      currentSelection.chapter,
+      v
+    );
+    setCurrentSelection({ ...currentSelection, verse });
+    setLabels({ ...labels, verse: label });
   };
 
   const selectChapter = async (c, label) => {
@@ -120,6 +100,35 @@ const Lookup = () => {
       verseArr.push({ order: i, label: "Verse " + i });
     }
     return verseArr;
+  };
+
+  const getSelectedVerse = async (b, c, v) => {
+    let params = {
+      b,
+      c,
+      v,
+      version: selectedVersion.table,
+      compare: compareVersion.table,
+      take: perPage,
+    };
+    let response = await fetch("/api/verse", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(params),
+    });
+    let verse = await response.json();
+    return verse.verse;
+  };
+
+  const getVerseCount = async (book, chapter) => {
+    let params = { b: book, c: chapter };
+    let response = await fetch("/api/verse/count", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(params),
+    });
+    let verse_count = await response.json();
+    return verse_count;
   };
 
   const slideVerse = async (direction) => {
@@ -164,6 +173,15 @@ const Lookup = () => {
       verse: "Verse " + verses[0].v,
     });
   };
+
+  // Prevent hydration mismatch by ensuring client-side rendering  
+  if (!hasMounted) {
+    return (
+      <div className="text-xl text-green-600 p-4" suppressHydrationWarning>
+        Loading...
+      </div>
+    );
+  }
 
   if (isLoading)
     return (
