@@ -25,12 +25,6 @@ const Lookup = () => {
     perPage,
   } = useContext(LookupContext);
   const [isLoading, setLoading] = useState(true);
-  const [hasMounted, setHasMounted] = useState(false);
-
-  // Ensure component has mounted before showing dynamic content
-  useEffect(() => {
-    setHasMounted(true);
-  }, []);
 
   useEffect(() => {
     findBooks()
@@ -41,7 +35,6 @@ const Lookup = () => {
 
   useEffect(() => {
     if (
-      hasMounted &&
       currentSelection.book &&
       currentSelection.chapter &&
       currentSelection.verse
@@ -52,7 +45,7 @@ const Lookup = () => {
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasMounted, selectedVersion, compareVersion, perPage]);
+  }, [selectedVersion, compareVersion, perPage]);
 
   const selectBook = (order, label) => {
     setSelectors({
@@ -173,15 +166,6 @@ const Lookup = () => {
       verse: "Verse " + verses[0].v,
     });
   };
-
-  // Prevent hydration mismatch by ensuring client-side rendering  
-  if (!hasMounted) {
-    return (
-      <div className="text-xl text-green-600 p-4" suppressHydrationWarning>
-        Loading...
-      </div>
-    );
-  }
 
   if (isLoading)
     return (
