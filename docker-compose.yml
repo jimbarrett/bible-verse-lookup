@@ -1,0 +1,23 @@
+# Docker Compose for Bible Verse Lookup
+version: '3.8'
+
+services:
+  bible-app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3000"  # Change this port for your nginx setup
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    volumes:
+      # Mount SQLite DB to persist data (optional)
+      - ./dbs:/app/dbs
+    restart: unless-stopped
+    networks:
+      - bible-network
+
+networks:
+  bible-network:
+    driver: bridge
