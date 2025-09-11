@@ -14,10 +14,10 @@ const VersionSelector = () => {
     useContext(BibleContext);
 
   useEffect(() => {
-    if (versions.length < 1) {
+    if (!versions || versions.length < 1) {
       fetchVersions().then((data) => setVersions(data.versions));
     }
-  }, []);
+  }, [versions, setVersions]);
 
   const doVersionSelect = (data) => {
     setSelectedVersion(data);

@@ -11,7 +11,7 @@ const ComparisonSelector = () => {
 
   useEffect(() => {
     if (!compareVersion.version) setCompareVersion(selectedVersion);
-  }, []);
+  }, [compareVersion.version, selectedVersion, setCompareVersion]);
 
   const doVersionSelect = async (data) => {
     setCompareVersion(data);
