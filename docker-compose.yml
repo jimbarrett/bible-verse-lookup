@@ -1,23 +1,30 @@
-# Docker Compose for Bible Verse Lookup
-version: '3.8'
-
 services:
-  bible-app:
-    build: 
-      context: .
-      dockerfile: Dockerfile
+  biblereader:
+    image: biblereader:${DOCKER_IMAGE_TAG:-latest}
+    container_name: biblereader
+    restart: unless-stopped
     ports:
-      - "3001:3000"  # Change this port for your nginx setup
+      - "3001:3000"
     environment:
       - NODE_ENV=production
-      - PORT=3000
+    env_file:
+      - .env
     volumes:
-      # Mount SQLite DB to persist data (optional)
+      # Mount logs directory for persistence
+      - ./logs:/app/logs
+      # Mount data directory for database files
+      - ./data:/app/data
+      # Keep the existing SQLite database mount
       - ./dbs:/app/dbs
-    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/books"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
     networks:
-      - bible-network
+      - biblereader-network
 
 networks:
-  bible-network:
+  biblereader-network:
     driver: bridge

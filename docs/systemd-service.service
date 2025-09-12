@@ -1,0 +1,19 @@
+# Systemd Service for Auto-Deployment
+# This sets up the Bible Verse Lookup app as a system service
+# Copy to: /etc/systemd/system/bible-verse-lookup.service
+
+[Unit]
+Description=Bible Verse Lookup Docker Application
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/opt/bible-verse-lookup
+ExecStart=/usr/local/bin/docker-compose up -d
+ExecStop=/usr/local/bin/docker-compose down
+TimeoutStartSec=0
+
+[Install]
+WantedBy=multi-user.target
