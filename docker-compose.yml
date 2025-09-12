@@ -1,6 +1,6 @@
 services:
   biblereader:
-    image: biblereader:${DOCKER_IMAGE_TAG:-latest}
+    image: ghcr.io/jimbarrett/bible-verse-lookup:${DOCKER_IMAGE_TAG:-latest}
     container_name: biblereader
     restart: unless-stopped
     ports:

@@ -9,14 +9,30 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
-    name: Deploy to Server
+  build-and-deploy:
+    name: Build and Deploy to Server
     runs-on: ubuntu-latest
     
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
       
+    - name: Log in to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: true
+        tags: |
+          ghcr.io/${{ github.repository }}:latest
+          ghcr.io/${{ github.repository }}:${{ github.sha }}
+          
     - name: Deploy to server
       uses: appleboy/ssh-action@v1.0.3
       with:
@@ -27,7 +43,7 @@ jobs:
         script: |
           # Set variables
           DEPLOY_DIR="/home/deploy/apps/biblereader"
-          REPO_URL="https://github.com/${{ github.repository }}.git"
+          IMAGE_NAME="ghcr.io/${{ github.repository }}"
           
           echo "🚀 Deploying Bible Reader..."
           
@@ -35,51 +51,57 @@ jobs:
           mkdir -p $DEPLOY_DIR
           cd $DEPLOY_DIR
           
-          # Clone or update repository in temp directory
-          if [ -d "temp-repo" ]; then
-            rm -rf temp-repo
-          fi
+          # Pull the new image
+          echo "📥 Pulling Docker image..."
+          docker pull $IMAGE_NAME:${{ github.sha }}
+          docker tag $IMAGE_NAME:${{ github.sha }} $IMAGE_NAME:latest
           
-          git clone $REPO_URL temp-repo
-          cd temp-repo
-          git checkout ${{ github.sha }}
-          
-          # Copy docker-compose file to deployment directory
-          cp docker-compose.yml ../docker-compose.yml
-          
-          # Copy any updated files that should be outside repo
-          if [ ! -f "../.env" ]; then
-            echo "⚠️  .env file doesn't exist, creating template..."
-            cp .env.template ../.env
-            echo "📝 Please update .env file with actual values"
-          fi
-          
-          # Build new image
-          cd ..
-          echo "🔨 Building Docker image..."
-          docker build -t biblereader:${{ github.sha }} -f temp-repo/Dockerfile temp-repo/
-          
-          # Tag as latest
-          docker tag biblereader:${{ github.sha }} biblereader:latest
-          
-          # Stop existing containers
+          # Stop existing container
           echo "🛑 Stopping existing containers..."
-          docker-compose down || true
+          docker stop biblereader || true
+          docker rm biblereader || true
           
-          # Start new containers
-          echo "🚀 Starting new containers..."
-          DOCKER_IMAGE_TAG=latest docker-compose up -d
+          # Create .env if it doesn't exist
+          if [ ! -f ".env" ]; then
+            echo "⚠️  .env file doesn't exist, creating template..."
+            cat > .env << 'EOF'
+          NODE_ENV=production
+          PORT=3000
+          DOMAIN=biblereader.online
+          LOG_LEVEL=info
+          EOF
+            echo "📝 Created .env file with defaults"
+          fi
           
-          # Clean up
-          rm -rf temp-repo
+          # Create directories for volumes
+          mkdir -p logs data dbs
+          
+          # Start new container
+          echo "� Starting new container..."
+          docker run -d \
+            --name biblereader \
+            --restart unless-stopped \
+            -p 3001:3000 \
+            --env-file .env \
+            -v $(pwd)/logs:/app/logs \
+            -v $(pwd)/data:/app/data \
+            -v $(pwd)/dbs:/app/dbs \
+            $IMAGE_NAME:latest
+          
+          # Wait a moment for container to start
+          sleep 5
+          
+          # Show status
+          echo "� Deployment Status:"
+          docker ps --filter name=biblereader
+          
+          # Test health
+          echo "🏥 Health Check:"
+          curl -f http://localhost:3001/api/books || echo "❌ Health check failed"
           
           # Cleanup old images (keep last 3)
           echo "🧹 Cleaning up old images..."
-          docker images biblereader --format "table {{.Tag}}\t{{.ID}}" | grep -E '^[a-f0-9]{12}' | tail -n +4 | awk '{print $2}' | xargs -r docker rmi || true
-          
-          # Show status
-          echo "📊 Deployment Status:"
-          docker-compose ps
+          docker images $IMAGE_NAME --format "table {{.Tag}}\t{{.ID}}" | grep -E '^[a-f0-9]{12}' | tail -n +4 | awk '{print $2}' | xargs -r docker rmi || true
           
           echo "✅ Deployment complete!"
           echo "🌐 Site should be available at: https://biblereader.online"
