@@ -30,8 +30,8 @@ jobs:
         context: .
         push: true
         tags: |
-          ghcr.io/${{ github.repository }}:latest
-          ghcr.io/${{ github.repository }}:${{ github.sha }}
+          ghcr.io/${{ github.repository_owner }}/biblereader:latest
+          ghcr.io/${{ github.repository_owner }}/biblereader:${{ github.sha }}
           
     - name: Deploy to server
       uses: appleboy/ssh-action@v1.0.3
@@ -43,7 +43,7 @@ jobs:
         script: |
           # Set variables
           DEPLOY_DIR="/home/deploy/apps/biblereader"
-          IMAGE_NAME="ghcr.io/${{ github.repository }}"
+          IMAGE_NAME="ghcr.io/${{ github.repository_owner }}/biblereader"
           
           echo "🚀 Deploying Bible Reader..."
           
