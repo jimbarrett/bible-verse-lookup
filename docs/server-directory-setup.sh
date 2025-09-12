@@ -32,7 +32,7 @@ cp $TEMP_DIR/docker-compose.yml $APP_DIR/
 
 # Copy database if it exists in the repo
 if [ -f "$TEMP_DIR/dbs/bible-sqlite.db" ]; then
-    cp $TEMP_DIR/dbs/bible-sqlite.db $APP_DIR/data/
+    cp $TEMP_DIR/dbs/bible-sqlite.db $APP_DIR/dbs/
     echo "📚 Database file copied"
 fi
 

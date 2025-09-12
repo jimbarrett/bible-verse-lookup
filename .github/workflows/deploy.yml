@@ -76,6 +76,13 @@ jobs:
           # Create directories for volumes
           mkdir -p logs data dbs
           
+          # Ensure database file exists in the host directory
+          if [ ! -f "dbs/bible-sqlite.db" ]; then
+            echo "📚 Copying database file from container..."
+            # Run a temporary container to extract the database
+            docker run --rm -v $(pwd)/dbs:/tmp/dbs $IMAGE_NAME:latest sh -c "cp /app/dbs/bible-sqlite.db /tmp/dbs/"
+          fi
+          
           # Start new container
           echo "� Starting new container..."
           docker run -d \
